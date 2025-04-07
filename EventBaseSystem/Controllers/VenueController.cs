@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-
+//methods taken from - Juliana Adeola.
 namespace EventBaseSystem.Controllers
 {
     public class VenueController : Controller
