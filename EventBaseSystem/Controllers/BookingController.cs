@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+// methods taken from Juliana Adeola.
 namespace EventBaseSystem.Controllers
 {
     public class BookingController : Controller
