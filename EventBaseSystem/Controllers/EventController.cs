@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using EventBaseSystem.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-
+//methods taken from Juliana Adeola.
 namespace EventBaseSystem.Controllers
 {
     public class EventController : Controller
