@@ -13,41 +13,71 @@ namespace EventBaseSystem.Controllers
         {
             _context = context;
         }
-        
+
 
         public async Task<IActionResult> Index()
 
         {
-            var Event = await _context.Event.ToListAsync();
+            var Event = await _context.Event
+                .Include(e => e.Venue)
+                .ToListAsync();
+
             return View(Event);
         }
 
         public IActionResult Create()
         {
-            return View();
+
             ViewData["VenueID"] = new SelectList(_context.Venue, "VenueID", "Name");
             return View();
         }
+        
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var Event = await _context.Event.FindAsync(id);
+            if (Event == null) return NotFound();
+
+            bool hasbookings = await _context.Booking.AnyAsync(b => b.EventID == id);
+            if (hasbookings)
+            {
+                TempData["ErrorMessage"] = "Cannot delete event with existing bookings.";
+                return RedirectToAction(nameof(Index));
+            }
+            _context.Event.Remove(Event);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Event deleted successfully.";
+            return RedirectToAction(nameof(Index));
+        }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Event Event)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Event newEvent)
         {
 
 
             if (ModelState.IsValid)
             {
+                newEvent.CreatedAt = DateTime.Now;
 
-                _context.Add(Event);
-
+                _context.Add(newEvent);
                 await _context.SaveChangesAsync();
-
+                TempData["SuccessMessage"] = "Event created successfully.";
                 return RedirectToAction(nameof(Index));
-                ViewData["VenueID"] = new SelectList(await _context.Venue.ToListAsync(), "VenueID", "Name", Event.VenueID);
 
             }
+                ViewData["VenueID"] = new SelectList(_context.Venue, "VenueID", "Name");
+                return View(newEvent);
+            
+           
 
-            return View(Event);
         }
 
     }
 }
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 8677436 (Cleaned up unnecessary files and added .gitignore)

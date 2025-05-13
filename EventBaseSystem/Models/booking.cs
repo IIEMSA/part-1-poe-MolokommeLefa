@@ -7,14 +7,15 @@ namespace EventBaseSystem.Models
     {
         [Key]
     public int BookingID { get; set; }
-
+        [Required(ErrorMessage = "venue is required")]
         [ForeignKey("Venue")]
         public int VenueID { get; set; }
-        public Venue Venue { get; set; }
+        public Venue? Venue { get; set; }
 
         [ForeignKey("Event")]
+        [Required(ErrorMessage = "event is required")]
         public int EventID { get; set; }
-        public Event Event { get; set; }
+        public Event? Event { get; set; }
 
         [Required]
         public DateTime StartDate { get; set; }
@@ -23,7 +24,7 @@ namespace EventBaseSystem.Models
         public DateTime EndDate { get; set; }
 
         [Required]
-        public string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using EventBaseSystem.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EventBaseSystem.Models
 {
@@ -19,9 +20,16 @@ namespace EventBaseSystem.Models
 
         public string ImageURL { get; set; }
 
+        //image upload..
+        [NotMapped]
+        public IFormFile? Image { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public List<EventBaseSystem.Models.booking> Bookings { get; set; } = new();
-    }
+
+        
+    
+}
 }
 

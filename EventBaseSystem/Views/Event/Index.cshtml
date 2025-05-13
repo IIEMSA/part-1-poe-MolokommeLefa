@@ -1,10 +1,27 @@
 ﻿@model IEnumerable<EventBaseSystem.Models.Event>
 
+
+
 @{
     ViewData["Title"] = "EventInfo";
+    
+
 }
 
+
+
 <h1>Index</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -49,7 +66,7 @@
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Venue.Location)
+                @Html.DisplayFor(modelItem => item.Venue.Name)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedAt)

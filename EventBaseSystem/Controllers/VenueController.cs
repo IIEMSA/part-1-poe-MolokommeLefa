@@ -2,7 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+<<<<<<< HEAD
 //methods taken from - Juliana Adeola.
+=======
+using Azure.Storage.Blobs;
+
+>>>>>>> 8677436 (Cleaned up unnecessary files and added .gitignore)
 namespace EventBaseSystem.Controllers
 {
     public class VenueController : Controller
@@ -23,26 +28,62 @@ namespace EventBaseSystem.Controllers
         ;
     }
         public IActionResult Create()
+
         {
+
+
             return View();
+
 
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Venue venue)
         {
-            if (ModelState.IsValid)
+            
+
+            if (!ModelState.IsValid)
             {
+               
+            
+            venue.CreatedAt = DateTime.Now;
 
-                _context.Add(venue);
-                await _context.SaveChangesAsync();
-
-
-                return RedirectToAction(nameof(Index));
+            if (venue.Image != null)
+            {
+                var blobUrl = await UploadImageToBlobAsync(venue.Image);
+                venue.ImageURL = blobUrl;
             }
 
-
-            return View(venue);
+            _context.Add(venue);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Venue created successfully.";
+            return RedirectToAction(nameof(Index));
         }
+         return View(venue);
+        }
+
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var Venue = await _context.Venue.FindAsync(id);
+            if (Venue == null)
+            {
+                return NotFound();
+            }
+            var hasbookings = await _context.Booking.AnyAsync(b => b.VenueID == id);
+            if (hasbookings)
+            {
+                TempData["ErrorMessage"] = "Cannot delete venue with existing bookings.";
+                return RedirectToAction(nameof(Index));
+            }
+            _context.Venue.Remove(Venue);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Venue deleted successfully.";
+            return RedirectToAction(nameof(Index));
+        }
+
         public async Task<IActionResult> Details(int? id)
         {
 
@@ -56,6 +97,11 @@ namespace EventBaseSystem.Controllers
         }
         public async Task<IActionResult> Delete(int? id)
         {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
             var Venue = await _context.Venue.FirstOrDefaultAsync(m => m.VenueID == id);
 
 
@@ -93,6 +139,7 @@ namespace EventBaseSystem.Controllers
             return View(Venue);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Venue venue)
         {
             if (id != venue.VenueID)
@@ -104,6 +151,15 @@ namespace EventBaseSystem.Controllers
             {
                 try
                 {
+                    if (venue.Image != null)
+                    {
+                        var blobUrl = await UploadImageToBlobAsync(venue.Image);
+                        venue.ImageURL = blobUrl;
+                    }
+                    else
+                    {
+
+                    }
                     _context.Update(venue);
                     await _context.SaveChangesAsync();
                 }
@@ -124,7 +180,30 @@ namespace EventBaseSystem.Controllers
             return View(venue);
         }
 
+        private async Task<string> UploadImageToBlobAsync(IFormFile imageFile)
+        {
+            var connectionString = "DefaultEndpointsProtocol=https;AccountName=part2poe;AccountKey=FnkbYw0VfzWSQUhDbt/4z/O3VZP1Sw6+PGgXafEenjx55v4Em/OZlQPyJq/scLPxsxj2g1gq6Qoe+AStPRm/Hw==;EndpointSuffix=core.windows.net";
+            var containerName = "images";
 
+            var blobServiceClient = new Azure.Storage.Blobs.BlobServiceClient(connectionString);
+            var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+            var blobClient = containerClient.GetBlobClient(Guid.NewGuid() + Path.GetExtension(imageFile.FileName));
+
+            var blobHttpHeaders = new Azure.Storage.Blobs.Models.BlobHttpHeaders
+            {
+                ContentType = imageFile.ContentType
+            };
+
+            using (var stream = imageFile.OpenReadStream())
+            {
+                await blobClient.UploadAsync(stream, new Azure.Storage.Blobs.Models.BlobUploadOptions
+                {
+                    HttpHeaders = blobHttpHeaders
+                });
+            }
+
+            return blobClient.Uri.ToString();
+        }
     }
 }
     

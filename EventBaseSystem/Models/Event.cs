@@ -7,6 +7,7 @@ namespace EventBaseSystem.Models
     public class Event
     {
         [Key]
+
         public int EventID { get; set; }
 
         [Required]
@@ -21,8 +22,9 @@ namespace EventBaseSystem.Models
         public DateTime EndDate { get; set; }
 
         [ForeignKey("Venue")]
+        [Required(ErrorMessage = "The Venue field is required.")]
         public int VenueID { get; set; }
-        public Venue Venue { get; set; }
+        public Venue? Venue { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

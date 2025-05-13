@@ -2,56 +2,68 @@
 
 @{
     ViewData["Title"] = "Create";
+    var events = ViewBag.EventName as List<EventBaseSystem.Models.Event>;
+    var venues = ViewBag.Venue as List<EventBaseSystem.Models.Venue>;
 }
 
 <h1>Create</h1>
 
-<h4>booking</h4>
+<h4>Booking</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            
             <div class="form-group">
                 <label asp-for="EventID" class="control-label"></label>
-                <select asp-for="VenueID" class="form-control">
-                    <option value="">- Select Event --</option>
-                    @foreach (var Event in ViewBag.EventName)
+                <select asp-for="EventID" class="form-control">
+                    <option value="">-- Select Event --</option>
+                    @if (events != null)
                     {
-                        <option value="@Event.EventID">@Event.EventName</option>
+                        foreach (var e in events)
+                        {
+                            <option value="@e.EventID">@e.EventName</option>
+                        }
                     }
                 </select>
             </div>
+
             <div class="form-group">
-                <label asp-for="EventID" class="control-label"></label>
+                <label asp-for="VenueID" class="control-label"></label>
                 <select asp-for="VenueID" class="form-control">
-                    <option value="">- Select Venue --</option>
-                    @foreach (var Venue in ViewBag.Venue)
+                    <option value="">-- Select Venue --</option>
+                    @if (venues != null)
                     {
-                        <option value="@Venue.VenueID">@Venue.Name</option>
+                        foreach (var v in venues)
+                        {
+                            <option value="@v.VenueID">@v.Name</option>
+                        }
                     }
                 </select>
             </div>
+
             <div class="form-group">
                 <label asp-for="StartDate" class="control-label"></label>
                 <input asp-for="StartDate" class="form-control" />
                 <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="EndDate" class="control-label"></label>
                 <input asp-for="EndDate" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="CreatedBy" class="control-label"></label>
                 <input asp-for="CreatedBy" class="form-control" />
                 <span asp-validation-for="CreatedBy" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="CreatedAt" class="control-label"></label>
-                <input asp-for="CreatedAt" class="form-control" />
-                <span asp-validation-for="CreatedAt" class="text-danger"></span>
-            </div>
+
+            
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -64,5 +76,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
