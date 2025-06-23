@@ -2,12 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-<<<<<<< HEAD
-//methods taken from - Juliana Adeola.
-=======
-using Azure.Storage.Blobs;
 
->>>>>>> 8677436 (Cleaned up unnecessary files and added .gitignore)
 namespace EventBaseSystem.Controllers
 {
     public class VenueController : Controller

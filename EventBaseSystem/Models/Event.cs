@@ -26,6 +26,9 @@ namespace EventBaseSystem.Models
         public int VenueID { get; set; }
         public Venue? Venue { get; set; }
 
+        public int? EventTypeID { get; set; }
+        public EventType? EventType { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public List<EventBaseSystem.Models.booking> Bookings { get; set; } = new();

@@ -15,20 +15,35 @@ namespace EventBaseSystem.Controllers
         }
 
 
-        public async Task<IActionResult> Index()
-
+        public async Task<IActionResult> Index(string searchEventName, int? eventTypeId)
         {
-            var Event = await _context.Event
-                .Include(e => e.Venue)
-                .ToListAsync();
+            var events = _context.Event.Include(e => e.EventType).Include(e => e.Venue).AsQueryable();
 
-            return View(Event);
+            if (!string.IsNullOrEmpty(searchEventName))
+            {
+                events = events.Where(e => e.EventName.Contains(searchEventName));
+            }
+
+            if (eventTypeId.HasValue)
+            {
+                events = events.Where(e => e.EventTypeID == eventTypeId);
+            }
+
+            ViewData["EventTypeID"] = new SelectList(_context.EventType, "EventTypeID", "Name");
+            ViewData["VenueID"] = new SelectList(await _context.Venue.ToListAsync(), "VenueID", "Name");
+
+            return View(await events.ToListAsync());
         }
+
 
         public IActionResult Create()
         {
 
             ViewData["VenueID"] = new SelectList(_context.Venue, "VenueID", "Name");
+
+            ViewData["EventTypeID"] = new SelectList(_context.EventType, "EventTypeID", "Name");
+
+
             return View();
         }
         
@@ -69,7 +84,12 @@ namespace EventBaseSystem.Controllers
 
             }
                 ViewData["VenueID"] = new SelectList(_context.Venue, "VenueID", "Name");
-                return View(newEvent);
+
+            ViewData["EventTypeID"] = new SelectList(_context.EventType, "EventTypeID", "Name");
+
+
+            return View(newEvent);
+
             
            
 
@@ -77,7 +97,3 @@ namespace EventBaseSystem.Controllers
 
     }
 }
-<<<<<<< HEAD
-=======
-    
->>>>>>> 8677436 (Cleaned up unnecessary files and added .gitignore)

@@ -12,6 +12,26 @@
 
 <h1>Index</h1>
 
+<form asp-action="Index" method="get">
+    <input type="text" name="searchEventName" placeholder="Search by Event Name" />
+
+    <select name="eventTypeId" asp-items="@(ViewData["EventTypeID"] as SelectList)">
+        <option value="">-- All Event Types --</option>
+    </select>
+
+    <select name="venueId" asp-items="@(ViewData["VenueID"] as SelectList)">
+        <option value="">-- All Venues --</option>
+    </select>
+
+    <input type="date" name="startDate" placeholder="Start Date" />
+    <input type="date" name="endDate" placeholder="End Date" />
+
+    <button type="submit">Filter</button>
+    <a href="@Url.Action("Index", "Event")" class="btn btn-secondary">Clear</a>
+</form>
+
+
+
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success">@TempData["SuccessMessage"]</div>
